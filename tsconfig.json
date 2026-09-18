@@ -10,12 +10,10 @@
     "module": "nodenext",
     "target": "esnext",
     "types": [],
-    // For nodejs:
-    // "lib": ["esnext"],
-    // "types": ["node"],
-    // and npm install -D @types/node
 
-    // Other Outputs
+    "outDir": "dist", //saida dos arquivos para visualização
+    "rootDir": "src",
+   
     "sourceMap": true,
     "declaration": true,
     "declarationMap": true,
