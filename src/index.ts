@@ -23,7 +23,7 @@ app.get("/", (_req: Request, res: Response) => {
   res.json({ message: "API funcionando!" });
 });
 
-// Listar registros de uma tabela permitida
+// Tabelas permitidas
 const tables = [
   "situations",
   "users",
@@ -35,13 +35,18 @@ const tables = [
 
 type TableName = (typeof tables)[number];
 
-function isTableName(value: string): value is TableName {
-  return tables.some((table) => table === value);
+function isTableName(value: unknown): value is TableName {
+  return typeof value === "string" && tables.some((table) => table === value);
+}
+
+function getTableName(req: Request): string | undefined {
+  const tableParam = req.params.table;
+  return Array.isArray(tableParam) ? tableParam[0] : tableParam;
 }
 
 // GET: listar todos os registros
 app.get("/:table", async (req: Request, res: Response) => {
-  const table = req.params.table;
+  const table = getTableName(req);
 
   if (!isTableName(table)) {
     res.status(404).json({ error: "Tabela não encontrada" });
@@ -59,7 +64,7 @@ app.get("/:table", async (req: Request, res: Response) => {
 
 // GET: buscar registro pelo ID
 app.get("/:table/:id", async (req: Request, res: Response) => {
-  const table = req.params.table;
+  const table = getTableName(req);
   const id = Number(req.params.id);
 
   if (!isTableName(table)) {
@@ -75,7 +80,7 @@ app.get("/:table/:id", async (req: Request, res: Response) => {
   try {
     const [rows] = await pool.execute(
       `SELECT * FROM \`${table}\` WHERE id = ?`,
-      [id]
+      [id],
     );
 
     const results = rows as unknown[];
@@ -86,7 +91,7 @@ app.get("/:table/:id", async (req: Request, res: Response) => {
     }
 
     res.json(results[0]);
-  } catch (error) {
+    } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao consultar registro" });
   }
@@ -94,7 +99,7 @@ app.get("/:table/:id", async (req: Request, res: Response) => {
 
 // POST: criar um registro
 app.post("/:table", async (req: Request, res: Response) => {
-  const table = req.params.table;
+  const table = getTableName(req);
 
   if (!isTableName(table)) {
     res.status(404).json({ error: "Tabela não encontrada" });
@@ -102,6 +107,12 @@ app.post("/:table", async (req: Request, res: Response) => {
   }
 
   const data = req.body as Record<string, unknown>;
+
+  if (data === null || typeof data !== "object" || Array.isArray(data)) {
+    res.status(400).json({ error: "O corpo da requisição deve ser um objeto" });
+    return;
+  }
+
   const fields = Object.keys(data);
 
   if (fields.length === 0 || fields.includes("id")) {
@@ -133,7 +144,7 @@ app.post("/:table", async (req: Request, res: Response) => {
 
 // PUT: atualizar um registro
 app.put("/:table/:id", async (req: Request, res: Response) => {
-  const table = req.params.table;
+  const table = getTableName(req);
   const id = Number(req.params.id);
 
   if (!isTableName(table)) {
@@ -154,10 +165,7 @@ app.put("/:table/:id", async (req: Request, res: Response) => {
     return;
   }
 
-  const setClause = fields
-    .map((field) => `\`${field}\` = ?`)
-    .join(", ");
-
+  const setClause = fields.map((field) => `\`${field}\` = ?`).join(", ");
   const values = fields.map((field) => data[field]);
 
   try {
@@ -189,7 +197,7 @@ app.put("/:table/:id", async (req: Request, res: Response) => {
 
 // DELETE: excluir um registro
 app.delete("/:table/:id", async (req: Request, res: Response) => {
-  const table = req.params.table;
+  const table = getTableName(req);
   const id = Number(req.params.id);
 
   if (!isTableName(table)) {
