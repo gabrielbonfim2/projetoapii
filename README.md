@@ -28,3 +28,24 @@ npm i --save-dev concurrently
 
 Compilar o arquivo Typescript. Executar o arquivo gerado
 npm run start:watch
+
+
+Criar base de dados no mysql
+
+CREATE DATABASE  nodeapi CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+
+Instalar a dependência para conectar o Node.js (TS) com o banco.
+
+npm i typeorm --save
+npm i reflect-metadata --save
+npm i mysql2 --save
+
+
+Manipular variaveis de ambiente
+npm i dotenv --save
+
+
+
+Instalar os tipos de variaveis para o TypeScript
+npm i --save-dev @types/dotenv
