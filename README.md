@@ -56,3 +56,5 @@ Criar as migrações das tabelas
 npx typeorm migration:create src/migration/CreateSituationsTable
 
 npx typeorm migration:create src/migration/CreateUsersTable
+
+npx typeorm migration:run -d dist/data-source.js
