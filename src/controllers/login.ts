@@ -3,7 +3,7 @@ import express, {Request, Response} from "express";
 
 //Importar o arquivo com as credenciais do banco de dados
 import { AppDataSource } from "../data-source";
-import { error } from "node:console";
+
 
 
 //Criar a Aplicação Express
@@ -20,7 +20,7 @@ AppDataSource.initialize().then(() => {
 
 //Criar a Rota get principal
 router.get("/",(req:Request, res:Response)=>(
-    res.send("Bem-Vindo Usuario")
+    res.send("Bem-Vindo Usuario beleza")
 ))
 
 

@@ -1,10 +1,16 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
 
-const dialect= process.env.DB_DIALECT ?? "mysql";
+// Importar variáveis de ambiente
+import dotenv from "dotenv";
+
+// Carregar as variáveis do .env
+dotenv.config()
+
+const dialect = process.env.DB_DIALECT ?? "mysql";
 
 export const AppDataSource = new DataSource({
-    type: dialect as  "mysql"  | "mariadb" | "postgres" | "mongodb",
+    type: dialect as "mysql" | "mariadb" | "postgres" | "mongodb",
     host: process.env.DB_HOST,
     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,
     username: process.env.DB_USERNAME,
@@ -14,5 +20,5 @@ export const AppDataSource = new DataSource({
     logging: true,
     entities: [],
     subscribers: [],
-    migrations: [],
+    migrations: [__dirname + "/migration/*.js"],
 })

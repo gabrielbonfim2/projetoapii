@@ -15,6 +15,6 @@ data_source_1.AppDataSource.initialize().then(() => {
     console.log("Erro na conexão com o banco de dados!", error);
 });
 //Criar a Rota get principal
-router.get("/", (req, res) => (res.send("Bem-Vindo Usuario")));
+router.get("/", (req, res) => (res.send("Bem-Vindo Usuario beleza")));
 //Serve para exportar a instrução da rota
 exports.default = router;
