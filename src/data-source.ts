@@ -1,12 +1,14 @@
 import "reflect-metadata";
-import { DataSource } from "typeorm";
-
-// Importar variáveis de ambiente
 import dotenv from "dotenv";
+import { DataSource } from "typeorm";
+import { User } from "./entity/Users";
+import { Situation } from "./entity/Situations";
+import { ProductCategory } from "./entity/ProductCategories";
+import { ProductSituation } from "./entity/ProductSituations";
+import { Product } from "./entity/Products";
 
-// Carregar as variáveis do .env
-dotenv.config()
-
+// Mantém a configuração de conexão do projeto original via variáveis do .env.
+dotenv.config();
 const dialect = process.env.DB_DIALECT ?? "mysql";
 
 export const AppDataSource = new DataSource({
@@ -18,7 +20,7 @@ export const AppDataSource = new DataSource({
     database: process.env.DB_DATABASE,
     synchronize: false,
     logging: true,
-    entities: [],
+    entities: [User, Situation, ProductCategory, ProductSituation, Product],
     subscribers: [],
-    migrations: [__dirname + "/migration/*.js"],
-})
+    migrations: [__dirname + "/migration/*{.js,.ts}"],
+});
